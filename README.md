@@ -1,7 +1,8 @@
 # TO DO
 - [x] Import project 
-- [ ] Cleanup project
-- [ ] Make visualisation file structure 
+- [x] Cleanup project
+- [x] Make visualisation file structure 
+- [x] Create node map panel
 - [ ] Calculate node map positions
 - [ ] Plot node map
 - [ ] Make figures
