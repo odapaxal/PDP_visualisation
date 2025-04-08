@@ -19,6 +19,20 @@ public class CoordinateTransformer {
         this.height = height;
     }
 
+    public List<Node> createNodeList(){
+        //random node allocation
+        List<Node> nodes = new ArrayList<>();
+        for (int i = 1; i <= 39; i++) {
+            int x = (int) (Math.random() * (width - 10) + 5);
+            int y = (int) (Math.random() * (height - 10) + 5);
+            nodes.add(new Node(i, x, y));
+        }
+        return nodes;
+    }
+
+}
+
+    /* 
     public List<Node> createNodeList() {
         List<Node> nodes = new ArrayList<>();
         try {
@@ -44,9 +58,10 @@ public class CoordinateTransformer {
 
             // Define the objective function
             GRBQuadExpr objective = new GRBQuadExpr();
+            double minDistance = 20;
             for (int i = 0; i < numNodes; i++) {
                 for (int j = i + 1; j < numNodes; j++) {
-                    double travelTime = getAverageDistance(travelInfoMap, numVehicles, i, j);
+                    double travelTime = getAverageDistance(travelInfoMap, numVehicles, i+1, j+1); // Adjusted for 1-based index
 
                     // Add (x[i] - x[j])^2 + (y[i] - y[j])^2 to the objective
                     objective.addTerm(1.0, x[i], x[i]);
@@ -59,6 +74,15 @@ public class CoordinateTransformer {
 
                     // Subtract travelTime^2 (constant term)
                     objective.addConstant(-2 * travelTime * travelTime);
+
+                    GRBQuadExpr distanceConstraint = new GRBQuadExpr();
+                    distanceConstraint.addTerm(1.0, x[i], x[i]);
+                    distanceConstraint.addTerm(1.0, x[j], x[j]);
+                    distanceConstraint.addTerm(-2.0, x[i], x[j]);
+                    distanceConstraint.addTerm(1.0, y[i], y[i]);
+                    distanceConstraint.addTerm(1.0, y[j], y[j]);
+                    distanceConstraint.addTerm(-2.0, y[i], y[j]);
+                    model.addQConstr(distanceConstraint, GRB.GREATER_EQUAL, minDistance*minDistance, "MinDist");
                 }
             }
             model.setObjective(objective, GRB.MINIMIZE);
@@ -70,7 +94,7 @@ public class CoordinateTransformer {
             for (int i = 0; i < numNodes; i++) {
                 double xCoord = x[i].get(GRB.DoubleAttr.X);
                 double yCoord = y[i].get(GRB.DoubleAttr.X);
-                nodes.add(new Node(i, (int) xCoord, (int) yCoord));
+                nodes.add(new Node(i+1, (int) xCoord, (int) yCoord));
             }
 
             // Dispose of the model and environment
@@ -85,8 +109,9 @@ public class CoordinateTransformer {
     public double getAverageDistance(HashMap<TravelKey, TravelInfo> travelInfoMap, int numVehicles, int i, int j) {
         double totalDistance = 0;
 
-        for (int k = 0; k < numVehicles; k++) {
-            TravelKey key = new TravelKey(i, j, k);
+        for (int k = 1; k <= numVehicles; k++) {
+            TravelKey key = new TravelKey(k,i, j);
+            System.out.println("Key: " + key+" for i: "+i+" j: "+j+" k: "+k);
             TravelInfo info = travelInfoMap.get(key);
             totalDistance += info.getTravelTime();
         }
@@ -94,3 +119,4 @@ public class CoordinateTransformer {
         return totalDistance/numVehicles;
     }
 }
+*/
