@@ -1,56 +1,79 @@
 package no.uib.inf101.sample.visualisation.components;
 
-import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
 import javax.swing.JPanel;
-import javax.swing.Timer;
 
+import no.uib.inf101.sample.parser.Read;
+import no.uib.inf101.sample.visualisation.animation.AnimationManager;
+import no.uib.inf101.sample.visualisation.objects.Node;
+import no.uib.inf101.sample.visualisation.objects.Route;
 import no.uib.inf101.sample.visualisation.utils.CoordinateTransformer;
-import no.uib.inf101.sample.visualisation.utils.Node;
+import no.uib.inf101.sample.visualisation.utils.RouteManager;
+import no.uib.inf101.sample.visualisation.utils.Solution;
 
 public class MapPanel extends JPanel{
     int width = 1000;
     int height = 600;
 
     private List<Node> nodes;
-    private int animationStep = 0;
-    private Timer timer;
-    private Node startNode, endNode;
+    private List<Route> routes;
+    private List<AnimationManager> animations;
+    private HashMap<Integer, List<Integer>> solution = new HashMap<>();
+    Graphics2D g2;
+    Solution solutionSolver;
+    RouteManager routeManager;
+    Read read;
 
     Random random = new Random();
 
-
-    public MapPanel() {
+    public MapPanel(Read read) {
+        System.out.println("MapPanel constructor called");
+        this.read = read;
         setPreferredSize(new java.awt.Dimension(width, height));
         setBackground(new Color(135, 206, 235)); // Sky blue color
 
-        CoordinateTransformer transformer = new CoordinateTransformer(width, height);
+        CoordinateTransformer transformer = new CoordinateTransformer(width, height,read);
         nodes = transformer.createNodeList();
+        routeManager = new RouteManager(read, nodes);
+        solutionSolver = new Solution(read);
 
-        // Choose random nodes for testing
-        startNode = nodes.get(random.nextInt(nodes.size()));
-        endNode = nodes.get(random.nextInt(nodes.size()));
-        while (startNode == endNode) {
-            endNode = nodes.get(random.nextInt(nodes.size()));
+        routeManager.formatRoutes(solution);
+
+        routes = routeManager.getRoutes();
+        System.out.println("Routes: " + routes);
+
+        // Create a list of animations for each route
+        animations = new ArrayList<>();
+        for (Route route : routes) {
+            AnimationManager animation = new AnimationManager(route, this::repaint);
+            animations.add(animation);
         }
-        startAnimation();
+        System.out.println("Animations: " + animations);
     }
 
     @Override
     public void paintComponent(Graphics g){
         super.paintComponent(g);
-        Graphics2D g2 = (Graphics2D) g;
+        g2 = (Graphics2D) g;
 
         drawNodes(g2);
-        drawRoute(g2, nodes, Color.RED);
-        
+        System.out.println("repaint is called");
+        // Draw all routes
+        if (!solution.isEmpty()){
+            System.out.println("Drawing routes...");
+            for (int i = 0; i < routes.size(); i++) {
+                AnimationManager animation = animations.get(i);
+                animation.drawCompletedSegments(g2);
+                animation.drawAnimatedLine(g2);
+            }
+        }
     }
     
     private void drawNodes(Graphics2D g2) {
@@ -64,45 +87,36 @@ public class MapPanel extends JPanel{
         }
     }
 
-    private void drawRoute(Graphics2D g2, List<Node> route, Color color){
-        Iterator<Node> iterator = route.iterator();
-        while(iterator.hasNext()){
-            Node start = iterator.next();
-            if(iterator.hasNext()){
-                Node end = iterator.next();
-                drawAnimatedLine(g2, start, end, color);
-                // Draw the line between the two nodes
-                g2.setColor(color);
-                g2.setStroke(new BasicStroke(2, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
-                g2.drawLine(start.x(), start.y(), end.x(), end.y());
-            }
+    public void startAnimation() {
+        System.out.println("Starting animation...");
+        for (AnimationManager animation : animations) {
+            animation.start();
         }
     }
 
-    private void drawAnimatedLine(Graphics2D g2, Node start, Node end, Color color) {
-        // interpolate the line
-        int currentX = start.x() + (end.x() - start.x()) * animationStep / 100;
-        int currentY = start.y() + (end.y() - start.y()) * animationStep / 100;
+    public void setSolution(HashMap<Integer, List<Integer>> solution) {
+        System.out.println("Setting new solution...");
+        this.solution = solution; // Update the solution
 
-        g2.setColor(color);
-        g2.setStroke(new BasicStroke(2, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
-        g2.drawLine(start.x(), start.y(), currentX, currentY);
+        // Reinitialize the routes based on the new solution
+        routeManager.formatRoutes(solution);
+        routes = routeManager.getRoutes();
+        System.out.println("Routes updated: " + routes);
+
+        // Recreate the animations for the new routes
+        animations.clear(); // Clear existing animations
+        for (Route route : routes) {
+            AnimationManager animation = new AnimationManager(route, this::repaint);
+            animations.add(animation);
+        }
+        System.out.println("Animations recreated: " + animations);
+
+        // Trigger a repaint to reflect the changes
+        repaint();
     }
 
-    /**
-     * Starts the animation of the line between two nodes.
-     * Delay: 20ms
-     * Animation step: 2
-     * The line will be drawn in 50 steps.
-     */
-    private void startAnimation() {
-        timer = new Timer(20, e -> {
-            animationStep += 2;
-            if (animationStep >= 100) {
-                timer.stop();
-            }
-            repaint();
-        });
-        timer.start();
+    public HashMap<Integer, List<Integer>> getSolution() {
+        return solution;
     }
+
 }

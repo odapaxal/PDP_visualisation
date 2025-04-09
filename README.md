@@ -3,8 +3,10 @@
 - [x] Cleanup project
 - [x] Make visualisation file structure 
 - [x] Create node map panel
-- [ ] Calculate node map positions
-- [ ] Plot node map
+- [x] Plot node map
+- [x] Draw lines from solution
+- [x] Make visualisation 
+- [ ] Make solution button
+- [ ] Make dummy route visualisation
 - [ ] Make figures
-- [ ] Draw lines from solution
-- [ ] Make visualisation ...
+- [ ] Calculate node map positions

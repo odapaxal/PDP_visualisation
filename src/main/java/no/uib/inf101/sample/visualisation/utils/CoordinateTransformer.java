@@ -9,20 +9,23 @@ import java.util.List;
 import no.uib.inf101.sample.objects.TravelInfo;
 import no.uib.inf101.sample.objects.TravelKey;
 import no.uib.inf101.sample.parser.Read;
+import no.uib.inf101.sample.visualisation.objects.Node;
 
 public class CoordinateTransformer {
     private final int width;
     private final int height;
+    Read read;
     
-    public CoordinateTransformer(int width, int height) {
+    public CoordinateTransformer(int width, int height, Read read) {
         this.width = width;
         this.height = height;
+        this.read = read;
     }
 
     public List<Node> createNodeList(){
         //random node allocation
         List<Node> nodes = new ArrayList<>();
-        for (int i = 1; i <= 39; i++) {
+        for (int i = 1; i <= read.getNumNodes(); i++) {
             int x = (int) (Math.random() * (width - 10) + 5);
             int y = (int) (Math.random() * (height - 10) + 5);
             nodes.add(new Node(i, x, y));
@@ -33,7 +36,7 @@ public class CoordinateTransformer {
 }
 
     /* 
-    public List<Node> createNodeList() {
+    public List<Node> createNodeList(List<Node> nodeNumbers){ {
         List<Node> nodes = new ArrayList<>();
         try {
             // Initialize Gurobi environment and model

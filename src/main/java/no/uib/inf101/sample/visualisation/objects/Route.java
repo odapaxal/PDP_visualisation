@@ -1,0 +1,17 @@
+package no.uib.inf101.sample.visualisation.objects;
+
+import java.awt.Color;
+import java.util.List;
+
+public record Route(Color color, List<Node> nodes, int vehicle) {
+    
+    @Override
+    public final String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Route for vehicle ").append(vehicle).append(": ");
+        for (Node node : nodes) {
+            sb.append(node.id()).append(" ");
+        }
+        return sb.toString();
+    }
+}
