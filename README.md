@@ -10,3 +10,10 @@
 - [ ] Make dummy route visualisation
 - [ ] Make figures
 - [ ] Calculate node map positions
+
+
+concious design/programming choices
+- output message in legend panel
+- routemanager, 
+- animationmanager object for each vehicle, so they operate individually
+- runclicklistener with mapPanel in constructor 

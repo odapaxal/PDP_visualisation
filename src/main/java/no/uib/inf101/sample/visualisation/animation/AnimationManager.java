@@ -10,7 +10,7 @@ import no.uib.inf101.sample.visualisation.objects.Route;
 
 public class AnimationManager {
     private Timer timer; //check if needs to be final
-    private final Route route;
+    private Route route;
     private int animationStep = 0;
     private final Runnable repaint;
     private int currentNode = 0;
@@ -29,12 +29,14 @@ public class AnimationManager {
             animationStep += 2;
             if (animationStep >= 100) {
                 animationStep = 0;
-                currentNode++;
-                if (currentNode >= route.nodes().size()) {
+                if (currentNode >= this.route.nodes().size()) {
+                    System.out.println("Timer stopped for route: " + route.vehicle());
                     timer.stop();
+                } else {
+                    currentNode++;
                 }
             }
-            System.out.println("Calling repaint, animationStep: " + animationStep + ", currentNode: " + currentNode);
+            //System.out.println("Calling repaint, animationStep: " + animationStep + ", currentNode: " + currentNode);
             repaint.run();
         });
     }
@@ -45,8 +47,14 @@ public class AnimationManager {
         timer.start();
     }
 
+    /**
+     * Draws the animated line between two nodes
+     * Interpolates the line using animationStep variable 
+     * @param g2
+     */
     public void drawAnimatedLine(Graphics2D g2) {
         if (currentNode >= route.nodes().size() - 1) {
+            System.out.println("Animation completed for route: " + route.vehicle());
             return; // No more nodes to animate
         }
 
@@ -62,6 +70,10 @@ public class AnimationManager {
         g2.drawLine(start.x(), start.y(), currentX, currentY);
     }
 
+    /**
+     * Draws the completed segments of the route
+     * @param g2
+     */
     public void drawCompletedSegments(Graphics2D g2){
         g2.setColor(route.color());
         g2.setStroke(new BasicStroke(2, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
@@ -82,5 +94,21 @@ public class AnimationManager {
                 ", repaint=" + repaint +
                 ", currentNode=" + currentNode +
                 '}'; // Added toString method for debugging
+    }
+
+    public void setRoute(Route route) {
+        this.route = route;
+        this.animationStep = 0;
+        this.currentNode = 0;
+        System.out.println("Route set to: " + route);
+    }
+    public Route getRoute() {
+        return route;
+    }
+    public int getAnimationStep() {
+        return animationStep;
+    }
+    public int getCurrentNode() {
+        return currentNode;
     }
 }

@@ -75,6 +75,17 @@ public class RouteManager {
         return nodes;
     }
 
+    public List<Route> createEmptyRoutes(){
+        routes = new ArrayList<>();
+        
+        for (int i = 0; i < read.getNumVehicles(); i++){
+            List<Node> nodes = new ArrayList<>();
+            Route route = new Route(colours.get(i), nodes, i + 1); // Vehicle numbers start from 1
+            routes.add(route);
+        }
+        return routes;
+    }
+
     public List<Route> getRoutes() {
         return routes;
     }

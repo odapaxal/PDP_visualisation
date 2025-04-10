@@ -25,8 +25,9 @@ public class VisualisationApp {
                 e.printStackTrace();
             }
 
-            MapPanel mapPanel = new MapPanel(read);
-            LegendPanel legendPanel = new LegendPanel(read);
+            MapPanel mapPanel = new MapPanel(read, null);
+            LegendPanel legendPanel = new LegendPanel(read, mapPanel);
+            mapPanel.legendPanel = legendPanel;
             
             // Add components to the frame
             frame.setLayout(new FlowLayout(FlowLayout.CENTER));

@@ -22,6 +22,7 @@ public class MapPanel extends JPanel{
     int width = 1000;
     int height = 600;
 
+    public LegendPanel legendPanel;
     private List<Node> nodes;
     private List<Route> routes;
     private List<AnimationManager> animations;
@@ -33,8 +34,8 @@ public class MapPanel extends JPanel{
 
     Random random = new Random();
 
-    public MapPanel(Read read) {
-        System.out.println("MapPanel constructor called");
+    public MapPanel(Read read, LegendPanel legendPanel) {
+        this.legendPanel = legendPanel;
         this.read = read;
         setPreferredSize(new java.awt.Dimension(width, height));
         setBackground(new Color(135, 206, 235)); // Sky blue color
@@ -44,10 +45,12 @@ public class MapPanel extends JPanel{
         routeManager = new RouteManager(read, nodes);
         solutionSolver = new Solution(read);
 
-        routeManager.formatRoutes(solution);
-
-        routes = routeManager.getRoutes();
-        System.out.println("Routes: " + routes);
+        if (solution.isEmpty()){
+            routes = routeManager.createEmptyRoutes();
+        } else {
+            routeManager.formatRoutes(solution);
+            routes = routeManager.getRoutes();
+        }
 
         // Create a list of animations for each route
         animations = new ArrayList<>();
@@ -55,7 +58,6 @@ public class MapPanel extends JPanel{
             AnimationManager animation = new AnimationManager(route, this::repaint);
             animations.add(animation);
         }
-        System.out.println("Animations: " + animations);
     }
 
     @Override
@@ -69,6 +71,7 @@ public class MapPanel extends JPanel{
         if (!solution.isEmpty()){
             System.out.println("Drawing routes...");
             for (int i = 0; i < routes.size(); i++) {
+                System.out.println("Drawing route " + i);
                 AnimationManager animation = animations.get(i);
                 animation.drawCompletedSegments(g2);
                 animation.drawAnimatedLine(g2);
@@ -95,7 +98,6 @@ public class MapPanel extends JPanel{
     }
 
     public void setSolution(HashMap<Integer, List<Integer>> solution) {
-        System.out.println("Setting new solution...");
         this.solution = solution; // Update the solution
 
         // Reinitialize the routes based on the new solution
@@ -103,20 +105,21 @@ public class MapPanel extends JPanel{
         routes = routeManager.getRoutes();
         System.out.println("Routes updated: " + routes);
 
-        // Recreate the animations for the new routes
-        animations.clear(); // Clear existing animations
-        for (Route route : routes) {
-            AnimationManager animation = new AnimationManager(route, this::repaint);
-            animations.add(animation);
+        for (int i = 0; i < routes.size(); i++) {
+            AnimationManager animation = animations.get(i);
+            animation.setRoute(routes.get(i));
+            System.out.println("Animation updated: "+ animation.getRoute() + " and nodes " + animation.getRoute().nodes());
         }
-        System.out.println("Animations recreated: " + animations);
-
+        legendPanel.setMessage("Solution: "+solution.toString()+ " with routes "+ routes);
         // Trigger a repaint to reflect the changes
         repaint();
     }
 
     public HashMap<Integer, List<Integer>> getSolution() {
         return solution;
+    }
+    public Read getRead() {
+        return read;
     }
 
 }
