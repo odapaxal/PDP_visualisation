@@ -66,19 +66,18 @@ public class AnimationManager {
         int currentY = start.y() + (end.y() - start.y()) * animationStep / 100;
 
         g2.setColor(route.color());
-        g2.setStroke(new BasicStroke(2, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
         g2.drawLine(start.x(), start.y(), currentX, currentY);
     }
 
     /**
      * Draws the completed segments of the route
-     * @param g2
+     * @param g2 Graphics2D object for drawing
      */
-    public void drawCompletedSegments(Graphics2D g2){
+    public void drawCompletedSegments(Graphics2D g2) {
         g2.setColor(route.color());
-        g2.setStroke(new BasicStroke(2, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+        int bounds = Math.min(currentNode, route.nodes().size() - 1); // if animation complete, draw up to the last node
 
-        for (int i = 0; i < currentNode; i++) {
+        for (int i = 0; i < bounds; i++) {
             Node start = route.nodes().get(i);
             Node end = route.nodes().get(i + 1);
             g2.drawLine(start.x(), start.y(), end.x(), end.y());

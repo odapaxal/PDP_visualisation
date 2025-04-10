@@ -1,5 +1,6 @@
 package no.uib.inf101.sample.visualisation.components;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -64,6 +65,7 @@ public class MapPanel extends JPanel{
     public void paintComponent(Graphics g){
         super.paintComponent(g);
         g2 = (Graphics2D) g;
+        g2.setStroke(new BasicStroke(4, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
 
         drawNodes(g2);
         System.out.println("repaint is called");
