@@ -11,6 +11,8 @@ import java.util.Random;
 
 import javax.swing.JPanel;
 
+import no.uib.inf101.sample.objects.Call;
+import no.uib.inf101.sample.objects.Vehicle;
 import no.uib.inf101.sample.parser.Read;
 import no.uib.inf101.sample.visualisation.animation.AnimationManager;
 import no.uib.inf101.sample.visualisation.objects.Node;
@@ -56,7 +58,7 @@ public class MapPanel extends JPanel{
         // Create a list of animations for each route
         animations = new ArrayList<>();
         for (Route route : routes) {
-            AnimationManager animation = new AnimationManager(route, this::repaint);
+            AnimationManager animation = new AnimationManager(route, this::repaint, this);
             animations.add(animation);
         }
     }
@@ -68,10 +70,9 @@ public class MapPanel extends JPanel{
         g2.setStroke(new BasicStroke(4, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
 
         drawNodes(g2);
-        System.out.println("repaint is called");
+
         // Draw all routes
         if (!solution.isEmpty()){
-            System.out.println("Drawing routes...");
             for (int i = 0; i < routes.size(); i++) {
                 System.out.println("Drawing route " + i);
                 AnimationManager animation = animations.get(i);
@@ -82,8 +83,8 @@ public class MapPanel extends JPanel{
     }
     
     private void drawNodes(Graphics2D g2) {
-        
-        for (Node node : nodes) {
+        List<Node> relevantNodes = addRelevantNodes();
+        for (Node node : relevantNodes) {
             int x = node.x() - 5; // Adjust x to center the circle
             int y = node.y() - 5; // Adjust y to center the circle
             g2.setColor(Color.getColor("darkblue"));
@@ -92,25 +93,47 @@ public class MapPanel extends JPanel{
         }
     }
 
+    private List<Node> addRelevantNodes() {
+        List<Node> relevantNodes = new ArrayList<>();
+
+        // add vehicle home nodes
+        List<Vehicle> vehicles = read.getVehicles();
+        for (int i = 0; i < vehicles.size(); i++) {
+            int homeNode = vehicles.get(i).getHomeNode();
+            relevantNodes.add(nodes.get(homeNode));
+        }
+        // add call origin and destination nodes
+        List<Call> calls = read.getCalls();
+        for (int i = 0; i < read.getNumCalls(); i++) {
+            int originNode = calls.get(i).getOriginNode();
+            int destinationNode = calls.get(i).getDestinationNode();
+            relevantNodes.add(nodes.get(originNode));
+            relevantNodes.add(nodes.get(destinationNode));
+        }
+        return relevantNodes;
+    }
+
     public void startAnimation() {
         System.out.println("Starting animation...");
         for (AnimationManager animation : animations) {
+            System.out.println("Starting animation for route: " + animation.getRoute());
             animation.start();
         }
     }
 
     public void setSolution(HashMap<Integer, List<Integer>> solution) {
+        System.out.println("Setting solution: " + solution);
         this.solution = solution; // Update the solution
-
+        System.out.println("Solution set: " + this.solution);
         // Reinitialize the routes based on the new solution
         routeManager.formatRoutes(solution);
+        System.out.println("Routes formatted: " + routeManager.getRoutes());
         routes = routeManager.getRoutes();
         System.out.println("Routes updated: " + routes);
 
         for (int i = 0; i < routes.size(); i++) {
             AnimationManager animation = animations.get(i);
             animation.setRoute(routes.get(i));
-            System.out.println("Animation updated: "+ animation.getRoute() + " and nodes " + animation.getRoute().nodes());
         }
         legendPanel.setMessage("Solution: "+solution.toString()+ " with routes "+ routes);
         // Trigger a repaint to reflect the changes
@@ -122,6 +145,9 @@ public class MapPanel extends JPanel{
     }
     public Read getRead() {
         return read;
+    }
+    public List<Route> getRoutes() {
+        return routes;
     }
 
 }

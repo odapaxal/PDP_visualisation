@@ -22,6 +22,7 @@ public class CoordinateTransformer {
         this.read = read;
     }
 
+
     public List<Node> createNodeList(){
         //random node allocation
         List<Node> nodes = new ArrayList<>();
@@ -33,10 +34,10 @@ public class CoordinateTransformer {
         return nodes;
     }
 
-}
 
-    /* 
-    public List<Node> createNodeList(List<Node> nodeNumbers){ {
+
+    
+    public List<Node> createNodeList(int d){ 
         List<Node> nodes = new ArrayList<>();
         try {
             // Initialize Gurobi environment and model
@@ -121,5 +122,13 @@ public class CoordinateTransformer {
 
         return totalDistance/numVehicles;
     }
+
+    private List<Node> initialiseNodes(){
+        List<Node> nodes = new ArrayList<>();
+        for (int i = 1; i <= read.getNumNodes(); i++) {
+            nodes.add(new Node(i, 0, 0));
+        }
+        return nodes;
+    }
+
 }
-*/

@@ -6,10 +6,12 @@
 - [x] Plot node map
 - [x] Draw lines from solution
 - [x] Make visualisation 
-- [ ] Make solution button
+- [x] Make solution button
+- [x] Make output message
 - [ ] Make dummy route visualisation
 - [ ] Make figures
 - [ ] Calculate node map positions
+- [ ] Make tests
 
 
 concious design/programming choices
