@@ -29,7 +29,7 @@ public class CoordinateTransformer {
         for (int i = 1; i <= read.getNumNodes(); i++) {
             int x = (int) (Math.random() * (width - 10) + 5);
             int y = (int) (Math.random() * (height - 10) + 5);
-            nodes.add(new Node(i, x, y));
+            nodes.add(new Node(i, x, y, false));
         }
         return nodes;
     }
@@ -98,7 +98,7 @@ public class CoordinateTransformer {
             for (int i = 0; i < numNodes; i++) {
                 double xCoord = x[i].get(GRB.DoubleAttr.X);
                 double yCoord = y[i].get(GRB.DoubleAttr.X);
-                nodes.add(new Node(i+1, (int) xCoord, (int) yCoord));
+                //nodes.add(new Node(i+1, (int) xCoord, (int) yCoord));
             }
 
             // Dispose of the model and environment
@@ -126,7 +126,7 @@ public class CoordinateTransformer {
     private List<Node> initialiseNodes(){
         List<Node> nodes = new ArrayList<>();
         for (int i = 1; i <= read.getNumNodes(); i++) {
-            nodes.add(new Node(i, 0, 0));
+            nodes.add(new Node(i, 0, 0,false));
         }
         return nodes;
     }

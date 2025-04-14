@@ -21,26 +21,24 @@ public class RouteManager {
         this.colours = randomColours();
     }
     
+    /**
+     * Turn solution into a Route object list with correct node numbers
+     * @param solution
+     * @return list<Route> with <Color color, List<Node>, int vehicle>
+     */
     public List<Route> formatRoutes(HashMap<Integer, List<Integer>> solution){
         routes = new ArrayList<>();
 
         for (var entry : solution.entrySet()) {
             int vehicle = entry.getKey();
-            System.out.println("Vehicle: " + vehicle);
-            System.out.println("Assigned calls: " + entry.getValue());
-
             List<Integer> assignedCalls = entry.getValue();
-            assignedCalls = new ArrayList<>(fromCallToNode(assignedCalls, vehicle));
-            System.out.println("Assigned calls with nodes: " + assignedCalls);
+       
+            // change from call number to pickup and delivery node
+            List<Node> nodes = new ArrayList<>(fromCallToNode(assignedCalls, vehicle));
 
-            List<Node> nodes = new ArrayList<>();
-            for (int i = 0; i < assignedCalls.size(); i++) {
-                nodes.add(allNodes.get(assignedCalls.get(i))); 
-            }
             Route route = new Route(colours.get(vehicle), nodes, vehicle); 
             routes.add(route);
         }
-        System.out.println("Routes: " + routes);
         return routes;
     }
 
@@ -54,23 +52,32 @@ public class RouteManager {
         return colours;
     }
 
-    private List<Integer> fromCallToNode(List<Integer> assignedCalls, int vehicle) {
+    /**
+     * Assigns nodes to a list and sets pickup boolean
+     * @param assignedCalls
+     * @param vehicle
+     * @return
+     */
+    private List<Node> fromCallToNode(List<Integer> assignedCalls, int vehicle) {
         List<Integer> calls = new ArrayList<>(assignedCalls);
-        List<Integer> nodes = new ArrayList<>();
+        List<Node> nodes = new ArrayList<>();
         List<Integer> visited = new ArrayList<>();
 
         // add home node if not dummy
         if (vehicle != 0){
-            nodes.add(read.getVehicles().get(vehicle - 1).getHomeNode());
+            int homeNode = read.getVehicles().get(vehicle - 1).getHomeNode();
+            nodes.add(allNodes.get(homeNode));
         }
         
+        // format to origin and destination nodes
         for (int i = 0; i < calls.size(); i++) {
             int call = calls.get(i);
-            int node;
+            Node node = null;
             if (visited.contains(call)){
-                node = read.getCalls().get(call-1).getDestinationNode();
+                node = allNodes.get(read.getCalls().get(call-1).getDestinationNode());
             } else {
-                node = read.getCalls().get(call-1).getOriginNode();
+                node = allNodes.get(read.getCalls().get(call-1).getOriginNode());
+                node.setPickup(true);
                 visited.add(call);
             }
             nodes.add(node);
@@ -78,6 +85,10 @@ public class RouteManager {
         return nodes;
     }
 
+    /**
+     * Create empty List<Node>'s for each vehicle 
+     * @return
+     */
     public List<Route> createEmptyRoutes(){
         routes = new ArrayList<>();
         

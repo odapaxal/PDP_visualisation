@@ -22,6 +22,7 @@ public class LegendPanel extends JPanel{
     public MapPanel mapPanel;
     private JLabel messageLabel;
     private JPanel legendContainer;
+    private JLabel routeLabel;
     Read read;
     int width = 1000;
     int height = 100;
@@ -37,10 +38,8 @@ public class LegendPanel extends JPanel{
 
         // legend info
         legendContainer = new JPanel();
-        legendContainer.setLayout(new BoxLayout(legendContainer, BoxLayout.X_AXIS));
-        legendContainer.setAlignmentX(CENTER_ALIGNMENT);
-        legendContainer.setOpaque(false);
         createLegend(mapPanel.getRoutes());
+        
 
         // output message label
         messageLabel = new JLabel("", JLabel.CENTER);
@@ -58,18 +57,16 @@ public class LegendPanel extends JPanel{
         add(Box.createVerticalStrut(10));
         add(solveButton);
         add(Box.createVerticalGlue());
-
-        revalidate();
-        repaint();
     }
 
     private void initializeSolveButton(JButton solveButton) {
-        solveButton.setText("Solve");
+        solveButton.setText("SOLVE");
         solveButton.setPreferredSize(new Dimension(100, 50));
         solveButton.setFocusPainted(false);
         solveButton.addActionListener(new RunClickListener(this,mapPanel));
         solveButton.addMouseListener(setMouseListener(solveButton));
         solveButton.setAlignmentX(CENTER_ALIGNMENT);
+        solveButton.setFont(getFont());
 
         add(solveButton);
     }
@@ -89,43 +86,42 @@ public class LegendPanel extends JPanel{
     }
 
     private void createLegend(List<Route> routes) {
-        legendContainer.removeAll(); // Clear existing legend items
+        legendContainer.setLayout(new BoxLayout(legendContainer, BoxLayout.X_AXIS));
+        legendContainer.setAlignmentX(CENTER_ALIGNMENT);
+        legendContainer.setOpaque(false);
+
         for (Route route : routes) {
-            JPanel legendItem = createLegendItem(route);
-            legendContainer.add(legendItem);
+            // Colored dot
+            JLabel colorDot = new JLabel() {
+                @Override
+                protected void paintComponent(Graphics g) {
+                    super.paintComponent(g);
+                    Graphics2D g2 = (Graphics2D) g;
+                    g2.setColor(route.color());
+                    g2.fillOval(0, 0, getWidth(), getHeight()); // Draw a small circle
+                }
+            };
+            colorDot.setPreferredSize(new Dimension(20, 20));
+            colorDot.setMinimumSize(new Dimension(20, 20));
+            colorDot.setMaximumSize(new Dimension(20, 20));
+
+            // Route label
+            if(route.vehicle() == 0){
+                routeLabel = new JLabel("Vehicle: Dummy");
+            } else {
+                routeLabel = new JLabel("Vehicle: " + route.vehicle());
+            }
+    
+            routeLabel.setFont(getFont());
+
+            // Add components directly to the legendContainer
+            legendContainer.add(colorDot);
+            legendContainer.add(Box.createHorizontalStrut(10)); // Spacing between dot and label
+            legendContainer.add(routeLabel);
+            legendContainer.add(Box.createHorizontalStrut(10)); // Spacing between labels
         }
         legendContainer.revalidate(); // Refresh the layout
         legendContainer.repaint(); // Redraw the container
-    }
-
-    private JPanel createLegendItem(Route route) {
-        JPanel legendItem = new JPanel();
-        legendItem.setLayout(new BoxLayout(legendItem, BoxLayout.X_AXIS));
-        legendItem.setOpaque(false); // Transparent background
-
-        // Colored dot
-        JLabel colorDot = new JLabel() {
-            @Override
-            protected void paintComponent(Graphics g) {
-                super.paintComponent(g);
-                Graphics2D g2 = (Graphics2D) g;
-                System.out.println("Color: " + route.color());
-                g2.setColor(route.color());
-                g2.fillOval(5, 5, 10, 10); // Draw a small circle
-            }
-        };
-        colorDot.setPreferredSize(new Dimension(20, 20));
-
-        // Route label
-        JLabel routeLabel = new JLabel("Vehicle " + route.vehicle());
-        routeLabel.setFont(new Font("CourierNew", Font.PLAIN, 12));
-
-        // Add components to the legend item
-        legendItem.add(colorDot);
-        legendItem.add(Box.createHorizontalStrut(10)); // Spacing between dot and label
-        legendItem.add(routeLabel);
-
-        return legendItem;
     }
 
     /**

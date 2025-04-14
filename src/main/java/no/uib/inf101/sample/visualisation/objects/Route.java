@@ -10,7 +10,7 @@ public record Route(Color color, List<Node> nodes, int vehicle) {
         StringBuilder sb = new StringBuilder();
         sb.append("Route for vehicle ").append(vehicle).append(": ");
         for (Node node : nodes) {
-            sb.append(node.id()).append(" ");
+            sb.append(node.getId()).append(" ");
         }
         return sb.toString();
     }
