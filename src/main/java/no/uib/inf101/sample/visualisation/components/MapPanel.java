@@ -31,6 +31,7 @@ public class MapPanel extends JPanel{
 
     public LegendPanel legendPanel;
     private List<Node> nodes;
+    private List<Node> relevantNodes;
     private List<Route> routes;
     private List<AnimationManager> animations;
     private HashMap<Integer, List<Integer>> solution = new HashMap<>();
@@ -49,18 +50,15 @@ public class MapPanel extends JPanel{
         setPreferredSize(new java.awt.Dimension(width, height));
         setBackground(new Color(135, 206, 235)); // Sky blue color
 
+        // Initialise routes and nodes
         CoordinateTransformer transformer = new CoordinateTransformer(width, height,read);
-        nodes = transformer.createNodeList();
+        nodes = transformer.getNodes();
+        relevantNodes = transformer.getRelevantNodes();
         routeManager = new RouteManager(read, nodes);
+        routes = routeManager.createEmptyRoutes();
+
         solutionSolver = new Solution(read);
         createImages();
-
-        if (solution.isEmpty()){
-            routes = routeManager.createEmptyRoutes();
-        } else {
-            routeManager.formatRoutes(solution);
-            routes = routeManager.getRoutes();
-        }
 
         // Create a list of animations for each route
         animations = new ArrayList<>();
@@ -93,7 +91,6 @@ public class MapPanel extends JPanel{
     }
     
     private void drawNodes(Graphics2D g2) {
-        List<Node> relevantNodes = addRelevantNodes();
         for (Node node : relevantNodes) {
             int x = node.getX() - 5; // Adjust x to center the circle
             int y = node.getY() - 5; // Adjust y to center the circle
@@ -107,7 +104,7 @@ public class MapPanel extends JPanel{
     private void drawObjects(Graphics2D g2) {
         // Draw vehicles
         for (int i = 0; i < read.getNumVehicles(); i++) {
-            Node homenode = nodes.get(read.getVehicles().get(i).getHomeNode());
+            Node homenode = nodes.get(read.getVehicles().get(i).getHomeNode()-1);
             if (homenode == null) {
                 throw new Error("Home node is null for vehicle: " + i);
             }
@@ -118,7 +115,7 @@ public class MapPanel extends JPanel{
 
         // Draw cargo
         for (int i = 0; i < read.getNumCalls(); i++) {
-            Node cargoOrigin = nodes.get(read.getCalls().get(i).getOriginNode());
+            Node cargoOrigin = nodes.get(read.getCalls().get(i).getOriginNode()-1);
             int x = cargoOrigin.getX() - 30; // Adjust x to center the image
             int y = cargoOrigin.getY() - 20; // Adjust y to center the image
             g2.drawImage(cargoImages.get(0), x, y, 60, 40, null);
@@ -139,26 +136,6 @@ public class MapPanel extends JPanel{
             System.out.println("Error loading images: " + e.getMessage());
             e.printStackTrace();
         }
-    }
-
-    private List<Node> addRelevantNodes() {
-        List<Node> relevantNodes = new ArrayList<>();
-
-        // add vehicle home nodes
-        List<Vehicle> vehicles = read.getVehicles();
-        for (int i = 0; i < vehicles.size(); i++) {
-            int homeNode = vehicles.get(i).getHomeNode();
-            relevantNodes.add(nodes.get(homeNode));
-        }
-        // add call origin and destination nodes
-        List<Call> calls = read.getCalls();
-        for (int i = 0; i < read.getNumCalls(); i++) {
-            int originNode = calls.get(i).getOriginNode();
-            int destinationNode = calls.get(i).getDestinationNode();
-            relevantNodes.add(nodes.get(originNode));
-            relevantNodes.add(nodes.get(destinationNode));
-        }
-        return relevantNodes;
     }
 
     public void startAnimation() {

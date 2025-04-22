@@ -28,8 +28,8 @@ public class AnimationManager {
     /**
      * Constructor for AnimationManager
      * @param route
-     * @param repaint
-     * Starts a new timer for animating the route
+     * @param repaint function
+     * Creates a new timer for animating the route
      */
     public AnimationManager(Route route, Runnable repaint, MapPanel mapPanel) {
         this.mapPanel = mapPanel;

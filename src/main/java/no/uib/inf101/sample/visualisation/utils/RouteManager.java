@@ -66,7 +66,7 @@ public class RouteManager {
         // add home node if not dummy
         if (vehicle != 0){
             int homeNode = read.getVehicles().get(vehicle - 1).getHomeNode();
-            nodes.add(allNodes.get(homeNode));
+            nodes.add(allNodes.get(homeNode-1));
         }
         
         // format to origin and destination nodes
@@ -74,9 +74,9 @@ public class RouteManager {
             int call = calls.get(i);
             Node node = null;
             if (visited.contains(call)){
-                node = allNodes.get(read.getCalls().get(call-1).getDestinationNode());
+                node = allNodes.get(read.getCalls().get(call-1).getDestinationNode()-1);
             } else {
-                node = allNodes.get(read.getCalls().get(call-1).getOriginNode());
+                node = allNodes.get(read.getCalls().get(call-1).getOriginNode()-1);
                 node.setPickup(true);
                 visited.add(call);
             }
