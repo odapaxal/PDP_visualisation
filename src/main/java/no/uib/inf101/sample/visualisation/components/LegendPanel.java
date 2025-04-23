@@ -98,7 +98,7 @@ public class LegendPanel extends JPanel{
                     super.paintComponent(g);
                     Graphics2D g2 = (Graphics2D) g;
                     g2.setColor(route.color());
-                    g2.fillOval(0, 0, getWidth(), getHeight()); // Draw a small circle
+                    g2.fillOval(0, 0, getWidth(), getHeight()); 
                 }
             };
             colorDot.setPreferredSize(new Dimension(20, 20));
@@ -121,7 +121,7 @@ public class LegendPanel extends JPanel{
             legendContainer.add(Box.createHorizontalStrut(10)); // Spacing between labels
         }
         legendContainer.revalidate(); // Refresh the layout
-        legendContainer.repaint(); // Redraw the container
+        legendContainer.repaint(); 
     }
 
     /**

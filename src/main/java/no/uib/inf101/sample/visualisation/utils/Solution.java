@@ -17,10 +17,19 @@ public class Solution {
     private double executionTime;
     Read read;
 
+    /**
+     * Constructor for Solution
+     * @param read data to be used
+     */
     public Solution(Read read){
         this.read = read;
     }
 
+    /**
+     * Run ALNS algoritm 
+     * Setting solution, objectiveValue and executionTime
+     * @throws IOException
+     */
     public void run() throws IOException {
 		long startTime = System.nanoTime();
         System.out.println("Running ALNS algorithm...");

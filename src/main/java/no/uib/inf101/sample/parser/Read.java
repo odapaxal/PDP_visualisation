@@ -39,7 +39,7 @@ public class Read {
      * @param filePath The path to the input file
      * @throws IOException 
      */
-    public void parseFile(String filePath) throws IOException{
+    private void parseFile(String filePath) throws IOException{
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
             String line;
             while ((line = br.readLine()) != null) {

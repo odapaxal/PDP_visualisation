@@ -15,15 +15,13 @@ import java.util.Random;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
-import no.uib.inf101.sample.objects.Call;
-import no.uib.inf101.sample.objects.Vehicle;
 import no.uib.inf101.sample.parser.Read;
 import no.uib.inf101.sample.visualisation.animation.AnimationManager;
 import no.uib.inf101.sample.visualisation.objects.Node;
 import no.uib.inf101.sample.visualisation.objects.Route;
-import no.uib.inf101.sample.visualisation.utils.CoordinateTransformer;
 import no.uib.inf101.sample.visualisation.utils.RouteManager;
 import no.uib.inf101.sample.visualisation.utils.Solution;
+import no.uib.inf101.sample.visualisation.utils.NodeAllocation.CoordinateTransformer;
 
 public class MapPanel extends JPanel{
     int width = 1000;
@@ -44,6 +42,11 @@ public class MapPanel extends JPanel{
 
     Random random = new Random();
 
+    /**
+     * Creates a MapPanel to visualise the routes and nodes.
+     * @param read data to be visualised
+     * @param legendPanel to interact with
+     */
     public MapPanel(Read read, LegendPanel legendPanel) {
         this.legendPanel = legendPanel;
         this.read = read;
@@ -75,22 +78,23 @@ public class MapPanel extends JPanel{
         g2.setStroke(new BasicStroke(4, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
 
         drawNodes(g2);
+        // Draw all routes if ALNS has not been run
         if (solution.isEmpty()){
             drawObjects(g2);
         }
    
-        // Draw all routes
+        // Draw all routes if ALNS has been run
         if (!solution.isEmpty()){
             for (int i = 0; i < routes.size(); i++) {
                 AnimationManager animation = animations.get(i);
                 g2.setColor(animation.getRoute().color());
-                animation.drawCompletedSegments(g2);
-                animation.drawAnimatedLine(g2);
+                animation.draw(g2);
             }
         }
     }
     
     private void drawNodes(Graphics2D g2) {
+        // Draw all relevant nodes in the map
         for (Node node : relevantNodes) {
             int x = node.getX() - 5; // Adjust x to center the circle
             int y = node.getY() - 5; // Adjust y to center the circle
@@ -138,6 +142,7 @@ public class MapPanel extends JPanel{
         }
     }
 
+    /** Starts animation for every animationManager */
     public void startAnimation() {
         System.out.println("Starting animation...");
         for (AnimationManager animation : animations) {
@@ -145,6 +150,10 @@ public class MapPanel extends JPanel{
         }
     }
 
+    /**
+     * Sets the solution and updates the routes accordingly.
+     * @param solution
+     */
     public void setSolution(HashMap<Integer, List<Integer>> solution) {
         this.solution = solution; // Update the solution
  
@@ -156,8 +165,8 @@ public class MapPanel extends JPanel{
             AnimationManager animation = animations.get(i);
             animation.setRoute(routes.get(i));
         }
-        legendPanel.setMessage("Solution: "+solution.toString()+ " with routes "+ routes);
-        // Trigger a repaint to reflect the changes
+        legendPanel.setMessage("Solution: "+solution.toString()+ " with routes "+ routes); // not initialised
+
         repaint();
     }
 

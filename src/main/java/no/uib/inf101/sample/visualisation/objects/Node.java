@@ -6,6 +6,13 @@ public class Node {
     private int y;
     private boolean pickup;
 
+    /**
+     * Creates a node with the given id, x and y coordinates, and pickup status.
+     * @param id
+     * @param x
+     * @param y
+     * @param pickup
+     */
     public Node(int id, int x, int y, boolean pickup) {
         this.id = id;
         this.x = x;

@@ -12,6 +12,12 @@ public class RunClickListener implements java.awt.event.ActionListener {
     private LegendPanel legendPanel;
     Read read;
 
+    /**
+     * Creates a RunClickListener to run the Adaptive Local Neighbourhood Search Algorithm
+     * when the button is clicked.
+     * @param legendPanel
+     * @param mapPanel
+     */
     public RunClickListener(LegendPanel legendPanel, MapPanel mapPanel) {
         this.legendPanel = legendPanel;
         this.mapPanel = mapPanel;
@@ -34,7 +40,7 @@ public class RunClickListener implements java.awt.event.ActionListener {
 
             @Override
             protected void done() {
-                // Update the UI after the run completes
+                // Update the UI after run completes
                 SwingUtilities.invokeLater(() -> {
                     legendPanel.setMessage("Solution completed!");
                     mapPanel.startAnimation();

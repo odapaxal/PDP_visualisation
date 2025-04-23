@@ -1,5 +1,8 @@
 package no.uib.inf101.sample.visualisation.objects;
 
+/**
+ * A simple generic tuple class to hold two values of different types.
+ */
 public class Tuple<A, B> {
     private final A first;
     private final B second;

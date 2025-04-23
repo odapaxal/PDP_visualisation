@@ -1,4 +1,4 @@
-package no.uib.inf101;
+package no.uib.inf101.test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -11,8 +11,8 @@ import org.junit.jupiter.api.Test;
 import no.uib.inf101.sample.parser.Read;
 import no.uib.inf101.sample.visualisation.objects.Node;
 import no.uib.inf101.sample.visualisation.objects.Route;
-import no.uib.inf101.sample.visualisation.utils.CoordinateTransformer;
 import no.uib.inf101.sample.visualisation.utils.RouteManager;
+import no.uib.inf101.sample.visualisation.utils.NodeAllocation.CoordinateTransformer;
 
 public class RouteManagerTest {
     RouteManager routeManager;

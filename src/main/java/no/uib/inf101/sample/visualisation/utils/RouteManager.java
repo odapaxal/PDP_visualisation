@@ -15,6 +15,11 @@ public class RouteManager {
     Read read;
     List<Color> colours;
 
+    /**
+     * Constructor for RouteManager
+     * @param read data 
+     * @param allNodes List<Node> with all nodes
+     */
     public RouteManager(Read read, List<Node> allNodes) {
         this.read = read;
         this.allNodes = allNodes;
@@ -87,7 +92,7 @@ public class RouteManager {
 
     /**
      * Create empty List<Node>'s for each vehicle 
-     * @return
+     * @return List<Route> with empty routes
      */
     public List<Route> createEmptyRoutes(){
         routes = new ArrayList<>();
