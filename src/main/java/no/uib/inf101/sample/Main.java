@@ -1,6 +1,7 @@
 package no.uib.inf101.sample;
 
-import java.awt.FlowLayout;
+import java.awt.BorderLayout;
+import java.awt.Font;
 import java.io.IOException;
 
 import javax.swing.*;
@@ -12,7 +13,6 @@ import no.uib.inf101.sample.visualisation.components.MapPanel;
 public class Main {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            //Create main frame
             JFrame frame = new JFrame("Visualisation");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.setSize(1200, 1000);
@@ -28,15 +28,20 @@ public class Main {
             MapPanel mapPanel = new MapPanel(read, null);
             LegendPanel legendPanel = new LegendPanel(read, mapPanel);
             mapPanel.legendPanel = legendPanel;
-            
+
+            // header panel
+            JPanel headerPanel = new JPanel();
+            JLabel headerLabel = new JLabel("Pickup and Delivery Problem Visualisation");
+            headerLabel.setFont(new Font("CourierNew", Font.BOLD, 20));
+            headerPanel.add(headerLabel);
+
             // Add components to the frame
-            frame.setLayout(new FlowLayout(FlowLayout.CENTER));
-            frame.add(mapPanel, "Center");
-            frame.add(legendPanel, "Center");
+            frame.setLayout(new BorderLayout());
+            frame.add(headerPanel, BorderLayout.NORTH); 
+            frame.add(mapPanel, BorderLayout.CENTER);   
+            frame.add(legendPanel, BorderLayout.SOUTH); 
 
             frame.setVisible(true);
         });
     }
-
-
 }
